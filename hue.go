@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -37,23 +37,23 @@ func buildRequestURL() string {
 
 func checkIfTheLightIsOn() {
 	if !rulesAreInEffect() {
-		fmt.Println("Rules are not in effect. Skipping...")
+		log.Print("Rules are not in effect. Skipping...")
 		return
 	}
 	lightIsOn := isTheLightOn()
 	if lightIsOn && lightTimerActivated {
 		if turnLightOffTime.Sub(time.Now()) > 0 {
-			fmt.Println("Light is on, timer is activated, not due to be turned off yet. Doing nothing...")
+			log.Print("Light is on, timer is activated, not due to be turned off yet. Doing nothing...")
 		} else {
-			fmt.Println("Light is on, timer is activated and must be turned off!")
+			log.Print("Light is on, timer is activated and must be turned off!")
 			turnTheLightOff()
 		}
 	} else if lightIsOn && !lightTimerActivated {
-		fmt.Println("Light is on, timer is deactivated. Activating timer...")
-		turnLightOffTime = time.Now().Add(3 * time.Minute)
+		log.Print("Light is on, timer is deactivated. Activating timer...")
+		turnLightOffTime = time.Now().Add(5 * time.Minute)
 		lightTimerActivated = true
 	} else {
-		fmt.Println("Light is off or timer is deactivated. Doing nothing...")
+		log.Print("Light is off or timer is deactivated. Doing nothing...")
 		lightTimerActivated = false
 	}
 }
