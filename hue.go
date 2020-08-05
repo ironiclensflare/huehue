@@ -5,15 +5,19 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 var lightTimerActivated bool
 var turnLightOffTime time.Time
+var config *HueConfig
 
 func main() {
+	_, config = GetConfig()
+	spew.Dump(config)
 	checkIfTheLightIsOn()
 	timer := time.NewTicker(20 * time.Second)
 	for range timer.C {
@@ -23,16 +27,14 @@ func main() {
 
 func rulesAreInEffect() bool {
 	now := time.Now()
-	if now.Hour() >= 22 || now.Hour() <= 8 {
+	if now.Hour() >= 12 || now.Hour() <= 8 {
 		return true
 	}
 	return false
 }
 
 func buildRequestURL() string {
-	ip := os.Getenv("HUE_IP")
-	user := os.Getenv("HUE_USER")
-	return "http://" + ip + "/api/" + user
+	return "http://" + config.IP + "/api/" + config.User
 }
 
 func checkIfTheLightIsOn() {
